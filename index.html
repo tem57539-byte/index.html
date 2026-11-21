@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>هندسة أكاديمي</title>
+<style>
+*{box-sizing:border-box;font-family:Tahoma} body{margin:0;background:#f1f5f9;color:#111}
+header{background:#0f172a;color:#fff;padding:18px;text-align:center}
+header h1{margin:0;font-size:22px} header p{margin:5px 0 0;color:#cbd5e1;font-size:13px}
+.container{max-width:900px;margin:auto;padding:15px}
+.card{background:#fff;border-radius:14px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+input,select,textarea{width:100%;padding:12px;margin:7px 0;border:1px solid #ddd;border-radius:10px}
+button{background:#2563eb;color:#fff;border:0;padding:12px 18px;border-radius:10px;cursor:pointer;width:100%;font-weight:bold}
+.subjects{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sub{padding:20px;border-radius:14px;color:#fff;text-align:center;cursor:pointer}
+.sub small{display:block;margin-top:6px;opacity:.9}
+.hidden{display:none}
+.badge{background:#dcfce7;padding:4px 10px;border-radius:20px;font-size:12px}
+.top{display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+<header><h1>🎓 هندسة أكاديمي</h1><p>تانية بكالوريا - مسار هندسة وعلوم حاسب</p></header>
+
+<div class="container" id="loginPage">
+  <div class="card">
+    <h2>تسجيل دخول الطالب</h2>
+    <input id="name" placeholder="اسم الطالب">
+    <input id="email" placeholder="الإيميل">
+    <input type="password" placeholder="كلمة السر">
+    <button onclick="login()">دخول للمنصة</button>
+    <p style="text-align:center;font-size:13px;color:#666">لو أول مرة، اكتب بياناتك وهتدخل على طول</p>
+  </div>
+</div>
+
+<div class="container hidden" id="homePage">
+  <div class="top"><h3 id="welcome"></h3><span class="badge">طالب - تانية بكالوريا</span></div>
+  <h3>اختر المادة:</h3>
+  <div class="subjects">
+    <div class="sub" style="background:#2563eb" onclick="openSub('عربي')">📖 عربي<small>محاضرات + تدريبات</small></div>
+    <div class="sub" style="background:#dc2626" onclick="openSub('انجليزي')">🔤 انجليزي<small>محاضرات + تدريبات</small></div>
+    <div class="sub" style="background:#059669" onclick="openSub('برمجة')">💻 برمجة<small>محاضرات + تدريبات</small></div>
+    <div class="sub" style="background:#d97706" onclick="openSub('تاريخ')">📜 تاريخ<small>محاضرات + تدريبات</small></div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h3>➕ لوحة الأدمن - نزّل محاضرة جديدة</h3>
+    <select id="mat"><option>عربي</option><option>انجليزي</option><option>برمجة</option><option>تاريخ</option></select>
+    <input id="title" placeholder="عنوان المحاضرة - مثال: الدرس الأول برمجة">
+    <select id="type"><option value="video">فيديو</option><option value="pdf">PDF</option><option value="quiz">تدريب / امتحان</option></select>
+    <input id="link" placeholder="حط لينك الفيديو أو ملف PDF من جوجل درايف / يوتيوب">
+    <button onclick="addLesson()">نشر المحاضرة</button>
+  </div>
+
+  <div class="card">
+    <h3>📚 كل المحاضرات</h3>
+    <div id="lessons"></div>
+  </div>
+</div>
+
+<script>
+let lessons = JSON.parse(localStorage.getItem('lessons')||'[]');
+if(lessons.length==0){
+  lessons=[
+    {mat:'برمجة',title:'مقدمة في البرمجة - الدرس الأول',type:'video',link:''},
+    {mat:'عربي',title:'النصوص - الدرس الأول',type:'pdf',link:''},
+    {mat:'انجليزي',title:'Grammar - Unit 1',type:'video',link:''},
+    {mat:'تاريخ',title:'الدرس الأول - الحضارات',type:'pdf',link:''},
+  ];
+}
+function login(){
+  let n=document.getElementById('name').value||'طالبنا';
+  document.getElementById('loginPage').classList.add('hidden');
+  document.getElementById('homePage').classList.remove('hidden');
+  document.getElementById('welcome').innerText='أهلاً يا '+n+' 👋';
+  render();
+}
+function openSub(m){
+  document.getElementById('mat').value=m;
+  alert('دخلت مادة '+m+' - انزل تحت شوف محاضراتها');
+  render(m);
+}
+function addLesson(){
+  let mat=document.getElementById('mat').value;
+  let title=document.getElementById('title').value;
+  let type=document.getElementById('type').value;
+  let link=document.getElementById('link').value;
+  if(!title) return alert('اكتب عنوان المحاضرة');
+  lessons.unshift({mat,title,type,link});
+  localStorage.setItem('lessons',JSON.stringify(lessons));
+  render(); alert('تم النشر ✅');
+}
+function render(filter){
+  let h='';
+  lessons.filter(l=>!filter||l.mat==filter).forEach(l=>{
+    h+=`<div style="border-bottom:1px solid #eee;padding:10px 0"><b>${l.title}</b><br><span class="badge">${l.mat} - ${l.type}</span> ${l.link?`<a href="${l.link}" target="_blank">فتح المحاضرة</a>`:''} <button style="width:auto;padding:6px 12px;background:#059669;margin-top:6px" onclick="alert('تم تسجيل حضورك ✅')">حضور</button></div>`;
+  });
+  document.getElementById('lessons').innerHTML=h||'لسه مفيش محاضرات';
+}
+render();
+</script>
+</body>
+</html>
