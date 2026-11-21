@@ -100,5 +100,11 @@ function render(filter){
 }
 render();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = 'https://olowwgkowlytpjkvcpr.supabase.co';
+  const supabaseKey = 'sb_publishable_CPi6nLvCzLvJSfjHSca5Lw_wpRi822y';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+</script>
 </body>
 </html>
